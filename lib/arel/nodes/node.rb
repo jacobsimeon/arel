@@ -31,8 +31,8 @@ module Arel
       # can find a node that has a "relation" member.
       #
       # Maybe we should just use `Table.engine`?  :'(
-      def to_sql engine = Table.engine
-        engine.connection.visitor.accept self
+      def to_sql visitor = Table.engine.visitor
+        visitor.accept self
       end
 
       # Iterate through AST, nodes will be yielded depth-first

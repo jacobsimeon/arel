@@ -3,8 +3,8 @@ require 'minitest/autorun'
 require 'fileutils'
 require 'arel'
 
-require 'support/fake_record'
-Arel::Table.engine = Arel::Sql::Engine.new(FakeRecord::Base.new)
+require 'support/fake_data_store'
+Arel::Table.engine = FakeDataStore.new
 
 class Object
   def must_be_like other

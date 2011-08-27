@@ -16,11 +16,11 @@ module Arel
     end
 
     def visitor
-      engine.connection.visitor
+      @engine.visitor
     end
 
     def to_sql
-      visitor.accept @ast
+      @engine.visitor.accept @ast
     end
 
     def initialize_copy other

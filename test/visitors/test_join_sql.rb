@@ -4,7 +4,7 @@ module Arel
   module Visitors
     describe 'the join_sql visitor' do
       before do
-        @visitor = ToSql.new Table.engine.connection_pool
+        @visitor = ToSql.new Table.engine
         @visitor.extend(JoinSql)
       end
 

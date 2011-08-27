@@ -4,19 +4,15 @@ require 'date'
 module Arel
   module Visitors
     class ToSql < Arel::Visitors::Visitor
-      def initialize pool
-        @pool           = pool
-        @connection     = nil
+      def initialize engine
+        @engine = engine
         @quoted_tables  = {}
         @quoted_columns = {}
       end
 
       def accept object
         self.last_column = nil
-        @pool.with_connection do |conn|
-          @connection = conn
-          super
-        end
+        super
       end
 
       private
@@ -97,7 +93,7 @@ key on UpdateManager using UpdateManager#key=
       end
 
       def table_exists? name
-        @pool.table_exists? name
+        @engine.table_exists? name
       end
 
       def column_for attr
@@ -110,7 +106,7 @@ key on UpdateManager using UpdateManager#key=
       end
 
       def column_cache
-        @pool.columns_hash
+        @engine.columns_hash
       end
 
       def visit_Arel_Nodes_Values o
@@ -418,16 +414,16 @@ key on UpdateManager using UpdateManager#key=
       end
 
       def quote value, column = nil
-        @connection.quote value, column
+        @engine.quote value, column
       end
 
       def quote_table_name name
         return name if Arel::Nodes::SqlLiteral === name
-        @quoted_tables[name] ||= @connection.quote_table_name(name)
+        @quoted_tables[name] ||= @engine.quote_table_name(name)
       end
 
       def quote_column_name name
-        @quoted_columns[name] ||= Arel::Nodes::SqlLiteral === name ? name : @connection.quote_column_name(name)
+        @quoted_columns[name] ||= Arel::Nodes::SqlLiteral === name ? name : @engine.quote_column_name(name)
       end
     end
   end

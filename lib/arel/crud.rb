@@ -28,7 +28,7 @@ switch to `compile_update`
       end
 
       um = compile_update values
-      @engine.connection.update um.to_sql, 'AREL'
+      @engine.update um.to_sql, 'AREL'
     end
 
     def compile_insert values
@@ -49,7 +49,7 @@ insert (#{caller.first}) is deprecated and will be removed in ARel 3.0.0. Please
 switch to `compile_insert`
         eowarn
       end
-      @engine.connection.insert compile_insert(values).to_sql
+      @engine.insert compile_insert(values).to_sql
     end
 
     def compile_delete
@@ -66,7 +66,7 @@ delete (#{caller.first}) is deprecated and will be removed in ARel 3.0.0. Please
 switch to `compile_delete`
         eowarn
       end
-      @engine.connection.delete compile_delete.to_sql, 'AREL'
+      @engine.delete compile_delete.to_sql, 'AREL'
     end
   end
 end

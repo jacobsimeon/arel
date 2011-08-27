@@ -153,13 +153,13 @@ module Arel
 
     def wheres
       warn "#{caller[0]}: SelectManager#wheres is deprecated and will be removed in ARel 3.0.0 with no replacement"
-      Compatibility::Wheres.new @engine.connection_pool, @ctx.wheres
+      Compatibility::Wheres.new @engine, @ctx.wheres
     end
 
     def where_sql
       return if @ctx.wheres.empty?
 
-      viz = Visitors::WhereSql.new @engine.connection_pool
+      viz = Visitors::WhereSql.new @engine
       Nodes::SqlLiteral.new viz.accept @ctx
     end
 
@@ -214,7 +214,7 @@ module Arel
     end
 
     def order_clauses
-      visitor = Visitors::OrderClauses.new(@engine.connection_pool)
+      visitor = Visitors::OrderClauses.new(@engine)
       visitor.accept(@ast).map { |x|
         Nodes::SqlLiteral.new x
       }
@@ -250,8 +250,7 @@ module Arel
 
     def to_a # :nodoc:
       warn "to_a is deprecated. Please remove it from #{caller[0]}"
-      # FIXME: I think `select` should be made public...
-      @engine.connection.send(:select, to_sql, 'AREL').map { |x| Row.new(x) }
+      @engine.select(to_sql, 'AREL').map { |x| Row.new(x) }
     end
 
     # FIXME: this method should go away
@@ -276,7 +275,7 @@ switch to `compile_insert`
       # for tables which assign primary key value using trigger.
       # RETURNING ... INTO ... clause will be added only if primary_key_value is nil
       # therefore it is necessary to pass primary key value as well
-      @engine.connection.insert im.to_sql, 'AREL', primary_key_name, primary_key_value
+      @engine.insert im.to_sql, 'AREL', primary_key_name, primary_key_value
     end
 
     private

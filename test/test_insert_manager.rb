@@ -56,7 +56,7 @@ module Arel
 
         manager.insert [[attribute, time]]
         manager.to_sql.must_be_like %{
-          INSERT INTO "users" ("created_at") VALUES (#{Table.engine.connection.quote time})
+          INSERT INTO "users" ("created_at") VALUES (#{Table.engine.quote time})
         }
       end
 

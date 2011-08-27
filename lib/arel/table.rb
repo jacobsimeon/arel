@@ -36,7 +36,7 @@ primary_key (#{caller.first}) is deprecated and will be removed in ARel 3.0.0
         eowarn
       end
       @primary_key ||= begin
-        primary_key_name = @engine.connection.primary_key(name)
+        primary_key_name = @engine.primary_key(name)
         # some tables might be without primary key
         primary_key_name && self[primary_key_name]
       end
@@ -108,7 +108,7 @@ Arel 3.0.0 with no replacement.  PEW PEW PEW!!!
         eowarn
       end
       @columns ||=
-        attributes_for @engine.connection.columns(@name, "#{@name} Columns")
+        attributes_for @engine.columns(@name, "#{@name} Columns")
     end
 
     def [] name
@@ -141,7 +141,7 @@ Arel 3.0.0 with no replacement.  PEW PEW PEW!!!
 Arel 3.0.0 with no replacement.  PEW PEW PEW!!!
         eowarn
       end
-      @@table_cache ||= Hash[engine.connection.tables.map { |x| [x,true] }]
+      @@table_cache ||= Hash[engine.tables.map { |x| [x,true] }]
     end
   end
 end

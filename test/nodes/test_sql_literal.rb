@@ -4,7 +4,7 @@ module Arel
   module Nodes
     describe 'sql literal' do
       before do
-        @visitor = Visitors::ToSql.new Table.engine.connection_pool
+        @visitor = Visitors::ToSql.new Table.engine
       end
 
       describe 'sql' do
