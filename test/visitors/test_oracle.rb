@@ -4,7 +4,7 @@ module Arel
   module Visitors
     describe 'the oracle visitor' do
       before do
-        @visitor = Oracle.new Table.engine
+        @visitor = Oracle.new Table.engine.connection_pool
       end
 
       it 'modifies order when there is distinct and first value' do
@@ -142,6 +142,13 @@ module Arel
         sql.must_be_like %{
           ( SELECT * FROM users WHERE age > 10 MINUS SELECT * FROM users WHERE age > 20 )
         }
+      end
+
+      describe 'locking' do
+        it 'defaults to FOR UPDATE when locking' do
+          node = Nodes::Lock.new(Arel.sql('FOR UPDATE'))
+          @visitor.accept(node).must_be_like "FOR UPDATE"
+        end
       end
     end
   end

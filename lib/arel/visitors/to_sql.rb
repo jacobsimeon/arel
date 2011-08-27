@@ -4,17 +4,15 @@ require 'date'
 module Arel
   module Visitors
     class ToSql < Arel::Visitors::Visitor
-      def initialize engine
-        @engine         = engine
+      def initialize pool
+        @pool           = pool
         @connection     = nil
-        @pool           = nil
         @quoted_tables  = {}
         @quoted_columns = {}
       end
 
       def accept object
         self.last_column = nil
-        @pool = @engine.connection_pool
         @pool.with_connection do |conn|
           @connection = conn
           super
@@ -90,6 +88,14 @@ key on UpdateManager using UpdateManager#key=
           o.alias ? " AS #{visit o.alias}" : ''}"
       end
 
+      def visit_Arel_Nodes_True o
+        "TRUE"
+      end
+
+      def visit_Arel_Nodes_False o
+        "FALSE"
+      end
+
       def table_exists? name
         @pool.table_exists? name
       end
@@ -134,7 +140,7 @@ key on UpdateManager using UpdateManager#key=
           (visit(o.top) if o.top),
           (visit(o.set_quantifier) if o.set_quantifier),
           ("#{o.projections.map { |x| visit x }.join ', '}" unless o.projections.empty?),
-          (visit(o.source) if o.source),
+          ("FROM #{visit(o.source)}" if o.source && !o.source.empty?),
           ("WHERE #{o.wheres.map { |x| visit x }.join ' AND ' }" unless o.wheres.empty?),
           ("GROUP BY #{o.groups.map { |x| visit x }.join ', ' }" unless o.groups.empty?),
           (visit(o.having) if o.having),
@@ -194,9 +200,8 @@ key on UpdateManager using UpdateManager#key=
         ""
       end
 
-      # FIXME: this does nothing on SQLLite3, but should do things on other
-      # databases.
       def visit_Arel_Nodes_Lock o
+        visit o.expr
       end
 
       def visit_Arel_Nodes_Grouping o
@@ -280,10 +285,7 @@ key on UpdateManager using UpdateManager#key=
       end
 
       def visit_Arel_Nodes_JoinSource o
-        return unless o.left || !o.right.empty?
-
         [
-          "FROM",
           (visit(o.left) if o.left),
           o.right.map { |j| visit j }.join(' ')
         ].compact.join ' '

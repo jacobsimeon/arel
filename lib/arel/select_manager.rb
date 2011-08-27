@@ -135,6 +135,10 @@ module Arel
       self
     end
 
+    def projections= projections
+      @ctx.projections = projections
+    end
+
     def order *expr
       # FIXME: We SHOULD NOT be converting these to SqlLiteral automatically
       @ast.orders.concat expr.map { |x|
@@ -149,13 +153,13 @@ module Arel
 
     def wheres
       warn "#{caller[0]}: SelectManager#wheres is deprecated and will be removed in ARel 3.0.0 with no replacement"
-      Compatibility::Wheres.new @engine, @ctx.wheres
+      Compatibility::Wheres.new @engine.connection_pool, @ctx.wheres
     end
 
     def where_sql
       return if @ctx.wheres.empty?
 
-      viz = Visitors::WhereSql.new @engine
+      viz = Visitors::WhereSql.new @engine.connection_pool
       Nodes::SqlLiteral.new viz.accept @ctx
     end
 
@@ -205,18 +209,23 @@ module Arel
     def join_sql
       return nil if @ctx.source.right.empty?
 
-      sql = @visitor.dup.extend(Visitors::JoinSql).accept @ctx
+      sql = visitor.dup.extend(Visitors::JoinSql).accept @ctx
       Nodes::SqlLiteral.new sql
     end
 
     def order_clauses
-      Visitors::OrderClauses.new(@engine).accept(@ast).map { |x|
+      visitor = Visitors::OrderClauses.new(@engine.connection_pool)
+      visitor.accept(@ast).map { |x|
         Nodes::SqlLiteral.new x
       }
     end
 
     def join_sources
       @ctx.source.right
+    end
+
+    def source
+      @ctx.source
     end
 
     def joins manager

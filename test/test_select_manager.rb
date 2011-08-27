@@ -42,6 +42,10 @@ module Arel
       @engine.connection.tables
     end
 
+    def visitor
+      @engine.connection.visitor
+    end
+
     def execute sql, name = nil, *args
       @executed << sql
     end
@@ -450,7 +454,7 @@ module Arel
       it 'adds a lock node' do
         table   = Table.new :users
         mgr = table.from table
-        mgr.lock.to_sql.must_be_like %{ SELECT FROM "users" }
+        mgr.lock.to_sql.must_be_like %{ SELECT FROM "users" FOR UPDATE }
       end
     end
 
@@ -856,6 +860,15 @@ module Arel
       end
     end
 
+    describe 'projections=' do
+      it 'overwrites projections' do
+        manager = Arel::SelectManager.new Table.engine
+        manager.project Arel.sql('foo')
+        manager.projections = [Arel.sql('bar')]
+        manager.to_sql.must_be_like %{ SELECT bar }
+      end
+    end
+
     describe 'take' do
       it "knows take" do
         table   = Table.new :users
@@ -941,6 +954,14 @@ module Arel
         manager = Arel::SelectManager.new Table.engine
         manager.from(table).project(table['id']).must_equal manager
         manager.to_sql.must_be_like 'SELECT "users"."id" FROM "users"'
+      end
+    end
+
+    describe 'source' do
+      it 'returns the join source of the select core' do
+        table   = Table.new :users
+        manager = Arel::SelectManager.new Table.engine
+        manager.source.must_equal manager.ast.cores.last.source
       end
     end
   end
