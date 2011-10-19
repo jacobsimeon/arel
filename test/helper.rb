@@ -2,9 +2,8 @@ require 'rubygems'
 require 'minitest/autorun'
 require 'fileutils'
 require 'arel'
+require 'support/fake_record'
 
-#require 'support/fake_record'
-#Arel::Table.engine = Arel::Sql::Engine.new(FakeRecord::Base.new)
 require 'bundler/setup'
 require 'ruby-debug'
 require 'arc'
