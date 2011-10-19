@@ -1,0 +1,27 @@
+CREATE TABLE users(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name VARCHAR(256),
+  bool BOOlEAN,
+  age INTEGER,
+  created_at DATETIME
+);
+
+CREATE TABLE products(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name VARCHAR(256),
+  price REAL
+);
+
+CREATE TABLE currency_rates(
+  rate REAL
+);
+
+CREATE TABLE comments(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  parent_id INTEGER
+);
+
+CREATE TABLE replies(
+  id INTEGER PRIMARY KEY AUTOINCREMENT
+)
+
