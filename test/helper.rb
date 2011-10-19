@@ -5,7 +5,6 @@ require 'arel'
 require 'support/fake_record'
 
 require 'bundler/setup'
-require 'ruby-debug'
 require 'arc'
 Arel::Table.engine = Arc::DataStores[:sqlite].new(:database => "tmp/arc.sqlite3", :adapter => :sqlite)
 
