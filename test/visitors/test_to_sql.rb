@@ -30,6 +30,9 @@ module Arel
       end
 
       it "should be thread safe around usage of last_column" do
+        #this test is different from the original
+        #Arc::Column#type actually returns the type associated with the datastore, not a ruby type
+        #this is necessary for casting purposes
         visit_integer_column = Thread.new do
           Thread.stop
           @visitor.send(:visit_Arel_Attributes_Attribute, @attr)
@@ -37,10 +40,10 @@ module Arel
 
         sleep 0.2
         @visitor.accept(@table[:name])
-        assert_equal(:string, @visitor.last_column.type)
+        assert_equal(:varchar, @visitor.last_column.type)
         visit_integer_column.run
         visit_integer_column.join
-        assert_equal(:string, @visitor.last_column.type)
+        assert_equal(:varchar, @visitor.last_column.type)
       end
 
       it 'should not quote sql literals' do
@@ -79,8 +82,10 @@ module Arel
       end
 
       it "should visit string subclass" do
-        @visitor.accept(Class.new(String).new(":'("))
-        @visitor.accept(Class.new(Class.new(String)).new(":'("))
+        class SuperString < String; end
+        class SuperSuperString < SuperString; end
+        @visitor.accept(SuperString.new(":'("))
+        @visitor.accept(SuperSuperString.new(":'("))
       end
 
       it "should visit_Class" do
