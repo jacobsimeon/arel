@@ -7,3 +7,5 @@ pkg
 .bundle
 *.swp
 Gemfile.lock
+.rvmrc
+tmp/
