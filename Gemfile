@@ -9,6 +9,7 @@ gem "minitest", "~>2.2", :group => [:development, :test]
 gem "hoe", "~>2.10", :group => [:development, :test]
 gem 'arc', :path => "../arc"
 gem "q", :path => "../q"
+gem 'pg'
 gem 'sqlite3'
 
 # vim: syntax=ruby

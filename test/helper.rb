@@ -6,7 +6,7 @@ require 'support/fake_record'
 
 require 'bundler/setup'
 require 'arc'
-Arel::Table.engine = Arc::DataStores[:sqlite].new(:database => "tmp/arc.sqlite3", :adapter => :sqlite)
+Arel::Table.engine = Arc::DataStores[:postgres].new(:database => "arc_development", :adapter => :postgres, :user => 'jacob' )
 
 def load_schema
   file = 'tmp/arc.sqlite3'
