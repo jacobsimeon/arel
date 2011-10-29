@@ -6,6 +6,7 @@ require 'support/fake_record'
 
 require 'bundler/setup'
 require 'arc'
+require 'ruby-debug'
 Arel::Table.engine = Arc::DataStores[:postgres].new(:database => "arc_development", :adapter => :postgres, :user => 'jacob' )
 
 def load_schema

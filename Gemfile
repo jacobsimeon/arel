@@ -11,5 +11,6 @@ gem 'arc', :path => "../arc"
 gem "q", :path => "../q"
 gem 'pg'
 gem 'sqlite3'
+gem 'ruby-debug19', :require => 'ruby-debug'
 
 # vim: syntax=ruby
